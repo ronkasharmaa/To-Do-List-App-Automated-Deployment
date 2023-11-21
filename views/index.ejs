@@ -3,7 +3,7 @@
 <div class="box" id="heading">
     <h1><%= date %></h1>
 </div>
-<div action="/" method="post" class="box">
+<div class="box">
     <% if(len == 0) { %>
         <form action="/" method="post">
             <div class="item" id="input">
@@ -14,11 +14,11 @@
     <% } else { %>
         <% for( let value of values ) { %>
             <div class="item">
-                <form action="/delete" method="post">
+                <form action="/toddelete" method="post">
                     <input type="checkbox" onchange="this.form.submit()" name="deletedItemId" value="<%= value.id %>">
                 </form>
                 <p id="title<%= value.id %>"><%= value.title %></p>
-                <form action="/edit" method="post" class="edit">
+                <form action="/todedit" method="post" class="edit">
                     <input type="hidden" name="updatedListId" value="<%= value.id %>">
                     <input type="text" name="updatedListTitle" id="input<%= value.id %>" value="<%= value.title %>" autocomplete="off" autofocus hidden>
                     <button type="submit" class="transBtn" id="done<%= value.id %>" hidden>

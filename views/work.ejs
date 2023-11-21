@@ -3,9 +3,9 @@
 <div class="box" id="heading">
     <h1>Work List</h1>
 </div>
-<div action="/" method="post" class="box">
+<div class="box">
     <% if(len == 0) { %>
-        <form action="/" method="post">
+        <form action="/work" method="post">
             <div class="item" id="input">
                 <input type="text" name="newItem" placeholder="New Item" id="input" autocomplete="off">
                 <input type="submit" value="+">
@@ -14,11 +14,11 @@
     <% } else { %>
         <% for( let value of values ) { %>
             <div class="item">
-                <form action="/delete" method="post">
+                <form action="/wordelete" method="post">
                     <input type="checkbox" onchange="this.form.submit()" name="deletedItemId" value="<%= value.id %>">
                 </form>
                 <p id="title<%= value.id %>"><%= value.title %></p>
-                <form action="/edit" method="post" class="edit">
+                <form action="/woredit" method="post" class="edit">
                     <input type="hidden" name="updatedListId" value="<%= value.id %>">
                     <input type="text" name="updatedListTitle" id="input<%= value.id %>" value="<%= value.title %>" autocomplete="off" autofocus hidden>
                     <button type="submit" class="transBtn" id="done<%= value.id %>" hidden>
@@ -28,7 +28,7 @@
                 </form>
             </div>
         <% } %>
-        <form action="/" method="post">
+        <form action="/work" method="post">
             <div class="item" id="input">
                 <input type="text" name="newItem" placeholder="New Item" id="input" autocomplete="off">
                 <input type="submit" value="+">
