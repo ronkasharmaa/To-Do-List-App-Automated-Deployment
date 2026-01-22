@@ -21,10 +21,6 @@ const db = postgres({
   username: PGUSER,
   password: PGPASSWORD,
   port: 5432,
-  ssl: "require",
-  connection: {
-    options: `project=${ENDPOINT_ID}`,
-  },
 });
 
 function setDate(req, res, next) {
