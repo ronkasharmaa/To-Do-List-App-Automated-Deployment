@@ -1,0 +1,29 @@
+# Node dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-lock.yaml
+
+# Secrets / env files
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# Docker/CI files
+docker-compose.yml
+.dockerignore
+Jenkinsfile
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Tests / docs
+tests
+coverage
+docs
+README.md
