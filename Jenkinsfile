@@ -21,7 +21,6 @@ pipeline {
 	// Create worker EC2
         dir('Terraform') {
           sh '''
-	    ls -la
             terraform init
             terraform apply -auto-approve -var="key_name=Jenkins"
             terraform output -raw public_ip > ../ansible/ec2_ip.txt
@@ -34,7 +33,8 @@ pipeline {
       steps {
         sh '''
           IP=$(cat ansible/ec2_ip.txt)
-          ssh-keyscan -H $IP >> ~/.ssh/known_hosts
+          mkdir -p /var/lib/jenkins/.ssh
+          ssh-keyscan -H $IP >> /var/lib/jenkins/.ssh/known_hosts
           sed "s/\\\${public_ip}/$IP/" ansible/inventory.ini.tpl > ansible/inventory.ini
         '''
       }
