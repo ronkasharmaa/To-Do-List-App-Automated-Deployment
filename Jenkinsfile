@@ -1,22 +1,55 @@
 pipeline {
-	agent any
+  agent any
 
-	environment {
-		PGPASSWORD = credentials('PGPASSWORD')
-	 }
-	stages {
+  environment {
+    // Jenkins Secret Text credential
+    PGPASSWORD = credentials('PGPASSWORD')
+  }
 
-		stage('Checkout') {
-			steps {
-				checkout scm
-			}
-		}
+  stages {
 
-		stage('Build & Run') {
-			steps{
-				sh 'docker compose -f Docker/docker-compose.yml up -d --build'
-			}
+    stage('Checkout') {
+      steps {
+        // Pull repo to Jenkins workspace
+        checkout scm
+      }
+    }
 
-		}
-	}
+    stage('Provision EC2 (Terraform)') {
+      steps {
+        // Create worker EC2
+        dir('terraform') {
+          sh '''
+            terraform init
+            terraform apply -auto-approve
+            terraform output -raw public_ip > ../ansible/ec2_ip.txt
+          '''
+        }
+      }
+    }
+
+    stage('Generate Inventory') {
+      steps {
+        sh '''
+          IP=$(cat ansible/ec2_ip.txt)
+          sh 'ssh-keyscan -H $(cat ansible/ec2_ip.txt) >> ~/.ssh/known_hosts'
+          sed "s/\\\${public_ip}/$IP/" ansible/inventory.ini.tpl > ansible/inventory.ini
+        '''
+      }
+    }
+
+    stage('Configure & Deploy (Ansible)') {
+      steps {
+        // SSH into worker EC2 and deploy app
+        sshagent(credentials: ['ec2-ssh-key']) {
+          dir('ansible') {
+            sh '''
+              ansible-playbook -i inventory.ini playbook.yml \
+              --extra-vars "pgpassword=$PGPASSWORD"
+            '''
+          }
+        }
+      }
+    }
+  }
 }

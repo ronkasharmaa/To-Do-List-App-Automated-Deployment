@@ -1,0 +1,11 @@
+- name: Clone application repo
+  git:
+    repo: https://github.com/ronkasharmaa/To-Do-List-App-Automated-Deployment.git
+    dest: /opt/app
+    force: yes
+
+- name: Build and run containers
+  community.docker.docker_compose_v2:
+    project_src: /opt/app/Docker
+  environment:
+    PGPASSWORD: "{{ pgpassword }}"
