@@ -1,24 +1,35 @@
-data "aws_ami" "ubuntu" {
-  most_recent = true
+resource "aws_security_group" "app_sg" {
+  name = "app-sg"
 
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["YOUR_IP/32"]
   }
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-  owners = ["099720109477"] # Canonical
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
-resource "aws_instance" "example" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+resource "aws_instance" "app" {
+  ami                    = "ami-0f5ee92e2d63afc18" # Ubuntu 22.04 (verify)
+  instance_type          = var.instance_type
+  key_name               = var.key_name
+  vpc_security_group_ids = [aws_security_group.app_sg.id]
 
   tags = {
-    Name = "HelloWorld"
+    Name = "todo-app"
   }
 }

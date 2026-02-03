@@ -1,29 +1,22 @@
 pipeline {
-  agent any
+	agent any
 
-  environment {
-    PGPASSWORD = credentials('PGPASSWORD')
-  }
-  stages {
+	environment {
+		PGPASSWORD = credentials('PGPASSWORD')
+	 }
+	stages {
 
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
-    }
+		stage('Checkout') {
+			steps {
+				checkout scm
+			}
+		}
 
-    stage('Build Image') {
-      steps {
-        sh 'docker build -t todo-app:latest .'
-      }
-    }
+		stage('Build & Run') {
+			steps{
+				sh 'docker compose -f Docker/docker-compose.yml up -d --build'
+			}
 
-    stage('Deploy') {
-      steps {
-        sh '''
-          docker compose up -d --build
-        '''
-      }
-    }
-  }
+		}
+	}
 }
