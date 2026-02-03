@@ -34,7 +34,7 @@ pipeline {
       steps {
         sh '''
           IP=$(cat ansible/ec2_ip.txt)
-          sh 'ssh-keyscan -H $(cat ansible/ec2_ip.txt) >> ~/.ssh/known_hosts'
+          ssh-keyscan -H $IP >> ~/.ssh/known_hosts
           sed "s/\\\${public_ip}/$IP/" ansible/inventory.ini.tpl > ansible/inventory.ini
         '''
       }
