@@ -17,13 +17,12 @@ pipeline {
 
     stage('Provision EC2 (Terraform)') {
       steps {
-        sh 'mkdir -p ansible'
 	// Create worker EC2
         dir('Terraform') {
           sh '''
             terraform init
             terraform apply -auto-approve -var="key_name=Jenkins"
-            terraform output -raw public_ip > ../ansible/ec2_ip.txt
+            terraform output -raw public_ip > ../Ansible/ec2_ip.txt
           '''
         }
       }
@@ -32,10 +31,10 @@ pipeline {
     stage('Generate Inventory') {
       steps {
         sh '''
-          IP=$(cat ansible/ec2_ip.txt)
+          IP=$(cat Ansible/ec2_ip.txt)
           mkdir -p /var/lib/jenkins/.ssh
           ssh-keyscan -H $IP >> /var/lib/jenkins/.ssh/known_hosts
-          sed "s/\\\${public_ip}/$IP/" ansible/inventory.ini.tpl > ansible/inventory.ini
+          sed "s/\\\${public_ip}/$IP/" Ansible/inventory.ini.tpl > Ansible/inventory.ini
         '''
       }
     }
@@ -44,7 +43,7 @@ pipeline {
       steps {
         // SSH into worker EC2 and deploy app
         sshagent(credentials: ['ec2-ssh-key']) {
-          dir('ansible') {
+          dir('Ansible') {
             sh '''
               ansible-playbook -i inventory.ini playbook.yml \
               --extra-vars "pgpassword=$PGPASSWORD"
