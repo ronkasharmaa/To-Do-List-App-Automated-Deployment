@@ -22,7 +22,7 @@ pipeline {
           sh '''
 	    ls -la
             terraform init
-            terraform apply -auto-approve
+            terraform apply -auto-approve -var="key_name=Jenkins"
             terraform output -raw public_ip > ../ansible/ec2_ip.txt
           '''
         }
