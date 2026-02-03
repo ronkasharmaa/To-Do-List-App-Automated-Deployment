@@ -20,6 +20,11 @@
     dest: /etc/nginx/sites-enabled/app.conf
     state: link
 
+- name: Test config file
+  command: nginx -t
+  register: nginx_test
+  changed_when: false
+
 - name: Restart nginx
   service:
     name: nginx
