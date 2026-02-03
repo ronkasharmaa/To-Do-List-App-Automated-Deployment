@@ -18,8 +18,9 @@ pipeline {
     stage('Provision EC2 (Terraform)') {
       steps {
         // Create worker EC2
-        dir('terraform') {
+        dir('Terraform') {
           sh '''
+	    ls -la
             terraform init
             terraform apply -auto-approve
             terraform output -raw public_ip > ../ansible/ec2_ip.txt
