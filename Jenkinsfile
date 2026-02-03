@@ -17,7 +17,8 @@ pipeline {
 
     stage('Provision EC2 (Terraform)') {
       steps {
-        // Create worker EC2
+        sh 'mkdir -p ansible'
+	// Create worker EC2
         dir('Terraform') {
           sh '''
 	    ls -la
